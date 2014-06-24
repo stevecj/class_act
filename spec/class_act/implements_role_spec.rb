@@ -42,7 +42,18 @@ describe ClassAct::ImplementsRole do
       end
 
       context "given a block that defines some instance methods not defined by the given module" do
-        it "raises a ClassAct::InvalidMethodDefinitionError"
+        it "raises a ClassAct::InvalidMethodDefinitionError" do
+          expect{
+            role_mod = role_module
+            subject.class_eval do
+              implement_role role_mod do
+                def baz ; end
+                def wut? ; end
+                def boom ; end
+              end
+            end
+          }.to raise_exception( ClassAct::InvalidMethodDefinitionError, /\bboom\b.*\bwut\?/ )
+        end
       end
 
     end
