@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = ClassAct::VERSION
   spec.authors       = ["Steve Jorgensen"]
   spec.email         = ["stevej@stevej.name"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = "Provides checks and conveniences for Ruby classes implementing module-defined role APIs"
+  spec.description   = spec.summary
   spec.homepage      = ""
   spec.license       = "MIT"
 
