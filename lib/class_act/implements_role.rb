@@ -7,8 +7,8 @@ module ClassAct
 
     module ClassBehavior
       def implement_role(role_module, &block)
-        include role_module
-        implementation_module = ca_role_implementation_modules[role_module] || begin
+        include role_module unless include?(role_module)
+        implementation_module = ca_role_implementation_modules[role_module] ||= begin
           i_mod = Module.new
           include i_mod
           i_mod
