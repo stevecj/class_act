@@ -3,6 +3,8 @@ require 'class_act/implements_role'
 
 module ClassAct
 
-  class InvalidMethodDefinitionError < StandardError ; end
+  class ClassAct::Error              < StandardError   ; end
+  class InvalidRoleClassError        < ClassAct::Error ; end
+  class InvalidMethodDefinitionError < ClassAct::Error ; end
 
 end

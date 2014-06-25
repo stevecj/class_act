@@ -6,7 +6,7 @@ describe ClassAct::ImplementsRole do
   describe "an including class" do
     subject {
       mod = described_module
-      Class.new do ; include mod ; end
+      Class.new(base_class) do ; include mod ; end
     }
 
     describe '::implement_role' do
@@ -16,6 +16,15 @@ describe ClassAct::ImplementsRole do
         def baz ; :role_baz ; end
         def bat ; :role_bat ; end
       end }
+
+      let(:base_class) { Class.new do
+        def goo ; :role_goo ; end
+        def car ; :role_car ; end
+        def raz ; :role_raz ; end
+        def fat ; :role_fat ; end
+      end }
+
+      let(:instance) { subject.new }
 
       context "given a block that defines instance methods overriding some of those of the given module" do
         before do
@@ -27,8 +36,6 @@ describe ClassAct::ImplementsRole do
             end
           end
         end
-
-        let(:instance) { subject.new }
 
         it "adds the non-overridden role module instance methods to the class" do
           expect( instance.bar ).to eq( :role_bar )
@@ -79,6 +86,37 @@ describe ClassAct::ImplementsRole do
 
       end
 
+      context "given a block that defines instance methods overriding some of those of the given superclass" do
+        before do
+          role_class = base_class
+          subject.class_eval do
+            implement_role role_class do
+              def goo ; :implementation_goo ; end
+              def raz ; :implementation_raz ; end
+            end
+          end
+        end
+
+        it "overides the role instance methods with defined implementation methods" do
+          expect( instance.goo ).to eq( :implementation_goo )
+          expect( instance.raz ).to eq( :implementation_raz )
+        end
+
+      end
+
+      context "given a a role class that is not a superclass" do
+        it "raises a ClassAct::InvalidRoleClassError" do
+          role_class = Class.new do
+            def self.to_s ; '<WannaBeRole>' ; end
+          end
+          expect{
+            subject.class_eval do
+              implement_role role_class do ; end
+            end
+          }.to raise_exception( ClassAct::InvalidRoleClassError, /<WannaBeRole>/ )
+        end
+      end
+
       context "given a block that defines some instance methods not defined by the given module" do
         it "raises a ClassAct::InvalidMethodDefinitionError" do
           expect{
@@ -86,6 +124,22 @@ describe ClassAct::ImplementsRole do
             subject.class_eval do
               implement_role role_mod do
                 def baz ; end
+                def wut? ; end
+                def boom ; end
+              end
+            end
+          }.to raise_exception( ClassAct::InvalidMethodDefinitionError, /\bboom\b.*\bwut\?/ )
+        end
+
+      end
+
+      context "given a block that defines some instance methods not defined by the given superclass" do
+        it "raises a ClassAct::InvalidMethodDefinitionError" do
+          expect{
+            role_class = base_class
+            subject.class_eval do
+              implement_role role_class do
+                def goo ; :implementation_goo ; end
                 def wut? ; end
                 def boom ; end
               end
