@@ -59,6 +59,24 @@ describe ClassAct::ImplementsRole do
           expect( ancestors_after ).to eq( ancestors_before )
         end
 
+        it "allows also implementing other roles" do
+          other_role_mod = Module.new do
+            def oof ; :role_oof ; end
+            def rab ; :role_rab ; end
+          end
+
+          subject.class_eval do
+            implement_role other_role_mod do
+              def rab ; :implementation_rab ; end
+            end
+          end
+
+          expect( instance.foo ).to eq( :implementation_foo )
+          expect( instance.bar ).to eq( :role_bar )
+          expect( instance.oof ).to eq( :role_oof )
+          expect( instance.rab ).to eq( :implementation_rab )
+        end
+
       end
 
       context "given a block that defines some instance methods not defined by the given module" do
