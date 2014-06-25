@@ -6,6 +6,9 @@ module ClassAct
     end
 
     module ClassBehavior
+
+      private
+
       def implement_role(role_module, &block)
         include role_module unless include?(role_module)
         implementation_module = ca_role_implementation_modules[role_module] ||= begin
@@ -23,8 +26,6 @@ module ClassAct
             "The following methods were defined as implementations of methods that are not defined by #{role_module}: #{extra_methods_text}."
         end
       end
-
-      private
 
       def ca_role_implementation_modules
         @ca_role_implementation_modules ||= {}
